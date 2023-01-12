@@ -8,7 +8,6 @@ import { ApolloServerPluginLandingPageGraphQLPlayground, ApolloServerPluginLandi
 
 import { resolvers } from './resolvers';
 import { connectToMongo } from './utils/database';
-import { verify } from 'jsonwebtoken';
 import { verifyJwt } from './utils/jwt';
 import { User } from './schema/user.schema';
 import Context from './types/context';

@@ -8,6 +8,10 @@ import { ApolloServerPluginLandingPageGraphQLPlayground, ApolloServerPluginLandi
 
 import { resolvers } from './resolvers';
 import { connectToMongo } from './utils/database';
+import { verify } from 'jsonwebtoken';
+import { verifyJwt } from './utils/jwt';
+import { User } from './schema/user.schema';
+import Context from './types/context';
 
 dotenv.config();
 
@@ -21,6 +25,15 @@ async function bootstrap() {
 
     const server = new ApolloServer({
         schema,
+        context: (ctx: Context) => {
+            const context = ctx;
+            if(ctx.req.cookies.accessToken) {
+                const user = verifyJwt<User>(ctx.req.cookies.accessToken);
+                context.user = user;
+            }
+
+            return context;
+        },
         plugins: [
             process.env.NODE_ENV === 'production' ? 
             ApolloServerPluginLandingPageProductionDefault() : 

@@ -1,7 +1,30 @@
 import { Field, ObjectType, InputType } from "type-graphql";
-import { prop, getModelForClass,  } from "@typegoose/typegoose";
+import { prop, getModelForClass, pre, queryMethod, ReturnModelType, index } from "@typegoose/typegoose";
 import { IsEmail, MinLength, MaxLength } from "class-validator"
+import bcrypt from "bcrypt"
+import { AsQueryMethod } from "@typegoose/typegoose/lib/types"
 
+function findByEmail (this: ReturnModelType<typeof User, QueryHelpers>, email: User["email"]) {
+    return this.findOne({ email });
+}
+
+interface QueryHelpers {
+    findByEmail: AsQueryMethod<typeof findByEmail>
+}
+
+@pre<User>('save', async function () {
+    if(!this.isModified('password')) {
+        return;
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const hash = await bcrypt.hashSync(this.password, salt);
+    
+    this.password = hash;
+})
+
+@index({ email: 1 })
+@queryMethod(findByEmail)
 @ObjectType()
 export class User {
     @Field(() => String)
@@ -20,7 +43,7 @@ export class User {
     password: string
 }
 
-export const UserModel = getModelForClass(User);
+export const UserModel = getModelForClass<typeof User, QueryHelpers>(User);
 
 @InputType()
 export class CreateUserInput {
@@ -39,4 +62,13 @@ export class CreateUserInput {
     })
     @Field(() => String)
     password: string
+}
+
+@InputType()
+export class LoginInput {
+    @Field(() => String)
+    email: string;
+
+    @Field(() => String)
+    password: string;
 }

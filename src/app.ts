@@ -11,6 +11,7 @@ import { connectToMongo } from './utils/database';
 import { verifyJwt } from './utils/jwt';
 import { User } from './schema/user.schema';
 import Context from './types/context';
+import authChecker from './utils/authChecker';
 
 dotenv.config();
 
@@ -19,7 +20,7 @@ async function bootstrap() {
 
     const schema = await buildSchema({
         resolvers,
-        // authChecker,
+        authChecker,
     });
 
     const server = new ApolloServer({

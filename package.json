@@ -7,7 +7,9 @@
   "license": "MIT",
   "private": false,
   "scripts": {
-    "dev": "ts-node-dev --respawn --transpile-only src/app.ts"
+    "dev": "ts-node-dev --respawn --transpile-only src/app.ts",
+    "start": "node dist/app.js",
+    "build": "tsc"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.0",
@@ -30,6 +32,7 @@
     "mongoose": "^6.8.3",
     "nanoid": "3.3.4",
     "reflect-metadata": "^0.1.13",
+    "tsc-watch": "^6.0.0",
     "type-graphql": "^1.1.1"
   }
 }
